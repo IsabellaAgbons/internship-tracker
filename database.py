@@ -3,30 +3,36 @@
 import sqlite3
 from datetime import date, timedelta
 DB_FILE = "postings.db"
-_COLUMNS = ("company", "role", "location", "date_posted", "url", "unique_key")
+
+
+_TABLE_SCHEMA = [
+    ("id", "INTEGER PRIMARY KEY AUTOINCREMENT"),
+    ("company", "TEXT"),
+    ("role", "TEXT"),
+    ("location", "TEXT"),
+    ("date_posted", "TEXT"),
+    ("url", "TEXT"),
+    ("unique_key", "TEXT UNIQUE"),
+    ("date_added", "TEXT"),
+]
+
+_COLUMNS = tuple(
+    name for name, _ in _TABLE_SCHEMA if name not in ("id", "date_added")
+)
 
 def _connect():
     """Open a connection to the postings SQLite database."""
     conn = sqlite3.connect(DB_FILE)
     conn.row_factory = sqlite3.Row
     return conn
+
 def create_table():
     """Create the postings table if it does not already exist."""
+    column_defs = ", ".join(f"{name} {sql_type}" for name, sql_type in _TABLE_SCHEMA)
     with _connect() as conn:
-        conn.execute(
-            """
-            CREATE TABLE IF NOT EXISTS postings (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                company TEXT,
-                role TEXT,
-                location TEXT,
-                date_posted TEXT,
-                url TEXT,
-                unique_key TEXT UNIQUE,
-                date_added TEXT
-            )
-            """
-        )
+        conn.execute(f"CREATE TABLE IF NOT EXISTS postings ({column_defs})")
+
+
 def get_existing_keys():
     """Return a set of all unique_key values currently in the table."""
     with _connect() as conn:
