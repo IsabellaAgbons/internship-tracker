@@ -68,6 +68,7 @@ def get_recent_postings(days=7):
             (cutoff,),
         ).fetchall()
     return [dict(row) for row in rows]
+
 def get_all_postings():
     """Return every row in the postings table."""
     with _connect() as conn:

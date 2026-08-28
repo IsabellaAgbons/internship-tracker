@@ -1,0 +1,9 @@
+# SQLite database (regenerated locally, not source-controlled)
+postings.db
+
+# Python
+__pycache__/
+*.pyc
+
+# Environment/secrets
+.env
