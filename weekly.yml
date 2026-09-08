@@ -1,0 +1,20 @@
+name: Weekly Internship Digest
+on:
+  schedule:
+    # cron: minute hour day-of-month month day-of-week — 0 9 * * 1 is every Monday at 09:00 UTC
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run digest
+        env:
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+        run: python main.py
