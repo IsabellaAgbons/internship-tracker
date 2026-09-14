@@ -1,14 +1,15 @@
-"""Build and send an HTML internship digest email via SendGrid."""
+"""Build and send an HTML internship digest email via Gmail SMTP."""
 import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from html import escape
 from dotenv import load_dotenv
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
 
 load_dotenv()
-SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
-FROM_EMAIL = "your.email@example.com"
-TO_EMAIL = "your.email@example.com"
+GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
+FROM_EMAIL = "bellagbons6@gmail.com"
+TO_EMAIL = "bellagbons6@gmail.com"
 
 def format_email_body(postings):
     """Return an HTML digest of postings, or a no-news message if the list is empty."""
@@ -36,16 +37,17 @@ def format_email_body(postings):
         "</table>"
     )
 def send_email(subject, body):
-    """Send an HTML email from FROM_EMAIL to TO_EMAIL using SendGrid."""
-    message = Mail(
-        from_email=FROM_EMAIL,
-        to_emails=TO_EMAIL,
-        subject=subject,
-        html_content=body,
-    )
-    client = SendGridAPIClient(SENDGRID_API_KEY)
-    response = client.send(message)
-    print(response.status_code)
+    """Send an HTML email from FROM_EMAIL to TO_EMAIL using Gmail SMTP."""
+    message = MIMEMultipart()
+    message["Subject"] = subject
+    message["From"] = FROM_EMAIL
+    message["To"] = TO_EMAIL
+    message.attach(MIMEText(body, "html"))
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login(FROM_EMAIL, GMAIL_APP_PASSWORD)
+    server.send_message(message)
+    server.quit()
 def run(postings):
     """Build the digest subject and body, then send the email."""
     subject = f"Internship Digest - {len(postings)} new postings"

@@ -1,5 +1,4 @@
 requests
 flask
 matplotlib
-sendgrid
 python-dotenv
