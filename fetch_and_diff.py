@@ -50,5 +50,3 @@ def run():
     new_postings = find_new_postings(all_raw_postings)
     save_new_postings(new_postings)
     return new_postings
-
-if __name__ == "__main__": print(run())
