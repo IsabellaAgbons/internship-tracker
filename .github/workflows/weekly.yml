@@ -7,6 +7,8 @@ on:
 jobs:
   digest:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -18,3 +20,8 @@ jobs:
         env:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: python main.py
+      - name: Commit postings database
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          file_pattern: postings.db
+          commit_message: "Update postings.db with latest data"
